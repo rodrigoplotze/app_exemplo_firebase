@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import '../controller/login_controller.dart';
 import '../controller/tarefa_controller.dart';
 import '../model/tarefa.dart';
+import 'components/botoes.dart';
+import 'components/mensagem.dart';
+import 'components/text_field.dart';
 
 class PrincipalView extends StatefulWidget {
   const PrincipalView({super.key});
@@ -37,8 +40,7 @@ class _PrincipalViewState extends State<PrincipalView> {
                         textStyle: TextStyle(fontSize: 12),
                       ),
                       onPressed: () {
-                        LoginController().logout();
-                        Navigator.pushReplacementNamed(context, 'login');
+                        efetuarLogout(context);
                       },
                       icon: Icon(Icons.exit_to_app, size: 14),
                       label: Text(snapshot.data.toString()),
@@ -52,7 +54,9 @@ class _PrincipalViewState extends State<PrincipalView> {
         ),
       ),
 
+      //
       // BODY
+      //
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView.builder(
@@ -100,15 +104,7 @@ class _PrincipalViewState extends State<PrincipalView> {
             width: 300,
             child: Column(
               children: [
-                TextField(
-                  controller: txtTitulo,
-                  decoration: InputDecoration(
-                    labelText: 'Título',
-                    prefixIcon: Icon(Icons.description),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 15),
+                campoTexto('Título', txtTitulo, Icons.description),
                 TextField(
                   controller: txtDescricao,
                   maxLines: 5,
@@ -123,19 +119,12 @@ class _PrincipalViewState extends State<PrincipalView> {
           ),
           actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 10),
           actions: [
-            TextButton(
-              child: Text("fechar"),
-              onPressed: () {
-                txtTitulo.clear();
-                txtDescricao.clear();
-                Navigator.of(context).pop();
-              },
-            ),
+            botaoCancelar('cancelar', limparCampos()),
             ElevatedButton(
               child: Text("salvar"),
               onPressed: () {
                 var t = Tarefa(
-                  LoginController().idUsuario(),
+                  LoginController().idUsuario().toString(),
                   txtTitulo.text,
                   txtDescricao.text,
                 );
@@ -158,5 +147,25 @@ class _PrincipalViewState extends State<PrincipalView> {
         );
       },
     );
+  }
+
+  limparCampos() {
+    txtTitulo.clear();
+    txtDescricao.clear();
+    Navigator.of(context).pop();
+  }
+
+  //
+  // EFETUAR LOGOUT
+  //
+  efetuarLogout(context) async {
+    bool resultado = await LoginController().logout();
+
+    if (resultado) {
+      sucesso(context, 'Usuário desconectado com sucesso.');
+      Navigator.pushReplacementNamed(context, 'login');
+    } else {
+      erro(context, 'Não foi possível desconectar o usuário');
+    }
   }
 }

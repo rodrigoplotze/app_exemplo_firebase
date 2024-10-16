@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../controller/login_controller.dart';
 import 'components/botoes.dart';
+import 'components/mensagem.dart';
 import 'components/text_field.dart';
 
 class CadastrarView extends StatefulWidget {
@@ -46,12 +47,7 @@ class _CadastrarViewState extends State<CadastrarView> {
                 botaoAcao(
                   context,
                   'salvar',
-                  LoginController().criarConta(
-                    context,
-                    txtNome.text,
-                    txtEmail.text,
-                    txtSenha.text,
-                  ),
+                  criarConta(context),
                 ),
               ],
             ),
@@ -60,5 +56,23 @@ class _CadastrarViewState extends State<CadastrarView> {
         ),
       ),
     );
+  }
+
+  //
+  // CRIAR CONTA DO USUÁRIO
+  //
+  criarConta(context) async {
+    bool resultado = await LoginController().criarConta(
+      txtNome.text,
+      txtEmail.text,
+      txtSenha.text,
+    );
+
+    if (resultado) {
+      sucesso(context, 'Usuário criado com sucesso.');
+      Navigator.pop(context);
+    } else {
+      erro(context, 'Não foi possível criar o usuário.');
+    }
   }
 }

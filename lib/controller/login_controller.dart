@@ -3,31 +3,41 @@ class LoginController {
   // Criação de um nova conta de usuário
   // no Firebase Authentication
   //
-  criarConta(context, nome, email, senha) {}
+  Future<bool> criarConta(nome, email, senha) async {
+    return true;
+  }
 
   //
   // LOGIN
   // Efetuar o login de um usuário previamente cadastrado
   // no serviço Firebase Authentication
   //
-  login(context, email, senha) {}
+  Future<bool> login(email, senha) async {
+    return true;
+  }
 
   //
   // ESQUECEU A SENHA
   // Envia uma mensagem de email para recuperação de senha para
   // um conta de email válida
   //
-  esqueceuSenha(context, String email) {}
+  Future<bool> esqueceuSenha(String email) async {
+    return true;
+  }
 
   //
   // LOGOUT
   //
-  logout() {}
+  Future<bool> logout() async{
+    return true;
+  }
 
   //
   // ID do Usuário Logado
   //
-  idUsuario() {}
+  Future<String> idUsuario() async{
+    return "";
+  }
 
   //
   // NOME do Usuário Logado

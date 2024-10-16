@@ -1,11 +1,11 @@
 import '../model/tarefa.dart';
 
 class TarefaController {
-  void adicionar(context, Tarefa t) {}
+  Future<void> adicionar(context, Tarefa t) async {}
 
-  void atualizar(context, id, Tarefa t) {}
+  Future<void> atualizar(context, id, Tarefa t) async {}
 
-  void excluir(context, id) {}
+  Future<void> excluir(context, id) async {}
 
   listar() {}
 }

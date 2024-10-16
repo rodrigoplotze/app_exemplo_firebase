@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../controller/login_controller.dart';
 import 'components/botoes.dart';
+import 'components/mensagem.dart';
 import 'components/text_field.dart';
 
 class LoginView extends StatefulWidget {
@@ -68,10 +69,7 @@ class _LoginViewState extends State<LoginView> {
                           botaoAcao(
                             context,
                             'enviar',
-                            LoginController().esqueceuSenha(
-                              context,
-                              txtEmailEsqueceuSenha.text,
-                            ),
+                            esqueceuSenha(context),
                           ),
                         ],
                       );
@@ -85,11 +83,7 @@ class _LoginViewState extends State<LoginView> {
             botaoAcao(
               context,
               'entrar',
-              LoginController().login(
-                context,
-                txtEmail.text,
-                txtSenha.text,
-              ),
+              efetuarLogin(context),
             ),
             SizedBox(height: 40),
             Row(
@@ -108,5 +102,35 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+  }
+
+  //
+  // EFETUAR LOGIN
+  //
+  efetuarLogin(context) async {
+    bool resultado =
+        await LoginController().login(txtEmail.text, txtSenha.text);
+
+    if (resultado) {
+      sucesso(context, 'Usuário autenticado com sucesso.');
+      Navigator.pushNamed(context, 'principal');
+    } else {
+      erro(context, 'Usuário e/ou senha inválida');
+    }
+  }
+
+  //
+  // ESQUECEU A SENHA
+  //
+  esqueceuSenha(context) async {
+    bool resultado = await LoginController().esqueceuSenha(
+      txtEmailEsqueceuSenha.text,
+    );
+
+    if (resultado) {
+      sucesso(context, 'Email enviado com sucesso.');
+    } else {
+      erro(context, 'Informe o email para recuperar a conta.');
+    }
   }
 }
