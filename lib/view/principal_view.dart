@@ -20,7 +20,9 @@ class PrincipalView extends StatefulWidget {
 class _PrincipalViewState extends State<PrincipalView> {
   var txtTitulo = TextEditingController();
   var txtDescricao = TextEditingController();
-  List<Tarefa> lista = [];
+  var ctrl = TarefaController();
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class _PrincipalViewState extends State<PrincipalView> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: StreamBuilder<QuerySnapshot>(
-          stream: TarefaController().listar(),
+          stream: ctrl.listar(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -72,7 +74,7 @@ class _PrincipalViewState extends State<PrincipalView> {
                 final dados = snapshot.requireData;
                 if (dados.size > 0) {
                   return ListView.builder(
-                    itemCount: lista.length,
+                    itemCount: dados.docs.length,
                     itemBuilder: (context, index) {
                       String uid = dados.docs[index].id;
                       dynamic item = dados.docs[index].data();
@@ -181,7 +183,7 @@ class _PrincipalViewState extends State<PrincipalView> {
   // EXECUTAR EXCLUIR
   //
   executarExcluir(context, uid) async {
-    bool resultado = await TarefaController().excluir(context, uid);
+    bool resultado = await ctrl.excluir(context, uid);
     if (resultado) {
       sucesso(context, 'Tarefa excluída com sucesso');
     } else {
@@ -198,9 +200,9 @@ class _PrincipalViewState extends State<PrincipalView> {
     txtTitulo.clear();
     txtDescricao.clear();
     if (uid == null) {
-      resultado = await TarefaController().adicionar(context, t);
+      resultado = await ctrl.adicionar(context, t);
     } else {
-      resultado = await TarefaController().atualizar(context, uid, t);
+      resultado = await ctrl.atualizar(context, uid, t);
     }
 
     if (resultado) {
