@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../controller/login_controller.dart';
@@ -59,24 +60,43 @@ class _PrincipalViewState extends State<PrincipalView> {
       //
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: ListView.builder(
-          itemCount: lista.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.description),
-                title: Text(lista[index].titulo),
-                subtitle: Text(lista[index].descricao),
-                onTap: () {
-                  txtTitulo.text = lista[index].titulo;
-                  txtDescricao.text = lista[index].descricao;
-                  salvarTarefa(context, docId: lista[index].uid);
-                },
-                onLongPress: () {
-                  TarefaController().excluir(context, lista[index].uid);
-                },
-              ),
-            );
+        child: StreamBuilder<QuerySnapshot>(
+          stream: TarefaController().listar(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Center(child: Text('Não foi possível conectar.'));
+              case ConnectionState.waiting:
+                return const Center(child: CircularProgressIndicator());
+              default:
+                final dados = snapshot.requireData;
+                if (dados.size > 0) {
+                  return ListView.builder(
+                    itemCount: lista.length,
+                    itemBuilder: (context, index) {
+                      String uid = dados.docs[index].id;
+                      dynamic item = dados.docs[index].data();
+                      return Card(
+                        child: ListTile(
+                          leading: Icon(Icons.description),
+                          title: Text(item['titulo']),
+                          subtitle: Text(item['descricao']),
+                          onTap: () {
+                            txtTitulo.text = item['titulo'];
+                            txtDescricao.text = item['descricao'];
+                            salvarTarefa(context, uid: uid);
+                          },
+                          onLongPress: () {
+                            executarExcluir(context, uid);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return Center(child: Text('Nenhuma tarefa encontrada.'));
+                }
+            }
           },
         ),
       ),
@@ -93,7 +113,7 @@ class _PrincipalViewState extends State<PrincipalView> {
   //
   // ADICIONAR TAREFA
   //
-  void salvarTarefa(context, {docId}) {
+  void salvarTarefa(context, {uid}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -128,19 +148,7 @@ class _PrincipalViewState extends State<PrincipalView> {
                   txtTitulo.text,
                   txtDescricao.text,
                 );
-                txtTitulo.clear();
-                txtDescricao.clear();
-                if (docId == null) {
-                  //
-                  // ADICIONAR TAREFA
-                  //
-                  TarefaController().adicionar(context, t);
-                } else {
-                  //
-                  // ATUALIZAR TAREFA
-                  //
-                  TarefaController().atualizar(context, docId, t);
-                }
+                executarSalvar(context, t, uid: uid);
               },
             ),
           ],
@@ -166,6 +174,39 @@ class _PrincipalViewState extends State<PrincipalView> {
       Navigator.pushReplacementNamed(context, 'login');
     } else {
       erro(context, 'Não foi possível desconectar o usuário');
+    }
+  }
+
+  //
+  // EXECUTAR EXCLUIR
+  //
+  executarExcluir(context, uid) async {
+    bool resultado = await TarefaController().excluir(context, uid);
+    if (resultado) {
+      sucesso(context, 'Tarefa excluída com sucesso');
+    } else {
+      erro(context, 'ERRO: Não foi possível excluir a tarefa.}');
+    }
+  }
+
+  //
+  // EXECUTAR SALVAR
+  //
+  executarSalvar(context, Tarefa t, {uid}) async {
+    bool resultado = false;
+
+    txtTitulo.clear();
+    txtDescricao.clear();
+    if (uid == null) {
+      resultado = await TarefaController().adicionar(context, t);
+    } else {
+      resultado = await TarefaController().atualizar(context, uid, t);
+    }
+
+    if (resultado) {
+      sucesso(context, 'Operação realizada com sucesso');
+    } else {
+      erro(context, 'ERRO: Não foi possível realizar a operação.}');
     }
   }
 }

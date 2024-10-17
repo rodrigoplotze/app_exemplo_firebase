@@ -1,11 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../model/tarefa.dart';
+import 'login_controller.dart';
 
 class TarefaController {
-  Future<void> adicionar(context, Tarefa t) async {}
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<void> atualizar(context, id, Tarefa t) async {}
+  Future<bool> adicionar(context, Tarefa t) async {
+    return true;
+  }
 
-  Future<void> excluir(context, id) async {}
+  Future<bool> atualizar(context, uid, Tarefa t) async {
+    return true;
+  }
 
-  listar() {}
+  Future<bool> excluir(context, uid) async {
+    return true;
+  }
+
+  Stream<QuerySnapshot> listar() {
+    var resultado = db
+        .collection('tarefas')
+        .where('uid', isEqualTo: LoginController().idUsuario());
+
+    return resultado.snapshots();
+  }
 }

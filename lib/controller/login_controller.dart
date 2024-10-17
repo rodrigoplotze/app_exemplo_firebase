@@ -1,4 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class LoginController {
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  
   //
   // Criação de um nova conta de usuário
   // no Firebase Authentication
