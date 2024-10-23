@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../controller/login_controller.dart';
 import '../controller/tarefa_controller.dart';
 import '../model/tarefa.dart';
-import 'components/botoes.dart';
 import 'components/text_field.dart';
 
 class PrincipalView extends StatefulWidget {
