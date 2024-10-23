@@ -6,17 +6,11 @@ import 'login_controller.dart';
 class TarefaController {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<bool> adicionar(context, Tarefa t) async {
-    return true;
-  }
+  adicionar(context, Tarefa t) {}
 
-  Future<bool> atualizar(context, uid, Tarefa t) async {
-    return true;
-  }
+  atualizar(context, uid, Tarefa t) {}
 
-  Future<bool> excluir(context, uid) async {
-    return true;
-  }
+  excluir(context, uid) {}
 
   Stream<QuerySnapshot> listar() {
     var resultado = db

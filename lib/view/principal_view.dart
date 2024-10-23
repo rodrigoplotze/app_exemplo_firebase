@@ -7,7 +7,6 @@ import '../controller/login_controller.dart';
 import '../controller/tarefa_controller.dart';
 import '../model/tarefa.dart';
 import 'components/botoes.dart';
-import 'components/mensagem.dart';
 import 'components/text_field.dart';
 
 class PrincipalView extends StatefulWidget {
@@ -20,17 +19,20 @@ class PrincipalView extends StatefulWidget {
 class _PrincipalViewState extends State<PrincipalView> {
   var txtTitulo = TextEditingController();
   var txtDescricao = TextEditingController();
-  var ctrl = TarefaController();
-  
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Expanded(child: Text('Tarefas')),
+            Expanded(
+                child: Text(
+              'Tarefas',
+              style: TextStyle(color: Colors.white),
+            )),
             FutureBuilder<String>(
               future: LoginController().usuarioLogado(),
               builder: (context, snapshot) {
@@ -43,10 +45,13 @@ class _PrincipalViewState extends State<PrincipalView> {
                         textStyle: TextStyle(fontSize: 12),
                       ),
                       onPressed: () {
-                        efetuarLogout(context);
+                        LoginController().logout();
                       },
-                      icon: Icon(Icons.exit_to_app, size: 14),
-                      label: Text(snapshot.data.toString()),
+                      icon: Icon(Icons.exit_to_app, size: 22),
+                      label: Text(
+                        snapshot.data.toString(),
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   );
                 }
@@ -62,44 +67,52 @@ class _PrincipalViewState extends State<PrincipalView> {
       //
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: ctrl.listar(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return Center(child: Text('Não foi possível conectar.'));
-              case ConnectionState.waiting:
-                return const Center(child: CircularProgressIndicator());
-              default:
-                final dados = snapshot.requireData;
-                if (dados.size > 0) {
-                  return ListView.builder(
-                    itemCount: dados.docs.length,
-                    itemBuilder: (context, index) {
-                      String uid = dados.docs[index].id;
-                      dynamic item = dados.docs[index].data();
-                      return Card(
-                        child: ListTile(
-                          leading: Icon(Icons.description),
-                          title: Text(item['titulo']),
-                          subtitle: Text(item['descricao']),
-                          onTap: () {
-                            txtTitulo.text = item['titulo'];
-                            txtDescricao.text = item['descricao'];
-                            salvarTarefa(context, uid: uid);
-                          },
-                          onLongPress: () {
-                            executarExcluir(context, uid);
-                          },
-                        ),
-                      );
-                    },
+        child: Center(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: TarefaController().listar(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Center(
+                    child: Text('Não foi possível conectar.'),
                   );
-                } else {
-                  return Center(child: Text('Nenhuma tarefa encontrada.'));
-                }
-            }
-          },
+                case ConnectionState.waiting:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                default:
+                  final dados = snapshot.requireData;
+                  if (dados.size > 0) {
+                    return ListView.builder(
+                      itemCount: dados.size,
+                      itemBuilder: (context, index) {
+                        String id = dados.docs[index].id;
+                        dynamic item = dados.docs[index].data();
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(Icons.description),
+                            title: Text(item['titulo']),
+                            subtitle: Text(item['descricao']),
+                            onTap: () {
+                              txtTitulo.text = item['titulo'];
+                              txtDescricao.text = item['descricao'];
+                              salvarTarefa(context, uid: id);
+                            },
+                            onLongPress: () {
+                              TarefaController().excluir(context, id);
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Text('Nenhuma tarefa encontrada.'),
+                    );
+                  }
+              }
+            },
+          ),
         ),
       ),
 
@@ -141,7 +154,10 @@ class _PrincipalViewState extends State<PrincipalView> {
           ),
           actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 10),
           actions: [
-            botaoCancelar('cancelar', limparCampos()),
+            TextButton(
+              onPressed: () => limparCampos(),
+              child: Text('cancelar'),
+            ),
             ElevatedButton(
               child: Text("salvar"),
               onPressed: () {
@@ -150,7 +166,14 @@ class _PrincipalViewState extends State<PrincipalView> {
                   txtTitulo.text,
                   txtDescricao.text,
                 );
-                executarSalvar(context, t, uid: uid);
+
+                txtTitulo.clear();
+                txtDescricao.clear();
+                if (uid == null) {
+                  TarefaController().adicionar(context, t);
+                } else {
+                  TarefaController().atualizar(context, uid, t);
+                }
               },
             ),
           ],
@@ -163,52 +186,5 @@ class _PrincipalViewState extends State<PrincipalView> {
     txtTitulo.clear();
     txtDescricao.clear();
     Navigator.of(context).pop();
-  }
-
-  //
-  // EFETUAR LOGOUT
-  //
-  efetuarLogout(context) async {
-    bool resultado = await LoginController().logout();
-
-    if (resultado) {
-      sucesso(context, 'Usuário desconectado com sucesso.');
-      Navigator.pushReplacementNamed(context, 'login');
-    } else {
-      erro(context, 'Não foi possível desconectar o usuário');
-    }
-  }
-
-  //
-  // EXECUTAR EXCLUIR
-  //
-  executarExcluir(context, uid) async {
-    bool resultado = await ctrl.excluir(context, uid);
-    if (resultado) {
-      sucesso(context, 'Tarefa excluída com sucesso');
-    } else {
-      erro(context, 'ERRO: Não foi possível excluir a tarefa.}');
-    }
-  }
-
-  //
-  // EXECUTAR SALVAR
-  //
-  executarSalvar(context, Tarefa t, {uid}) async {
-    bool resultado = false;
-
-    txtTitulo.clear();
-    txtDescricao.clear();
-    if (uid == null) {
-      resultado = await ctrl.adicionar(context, t);
-    } else {
-      resultado = await ctrl.atualizar(context, uid, t);
-    }
-
-    if (resultado) {
-      sucesso(context, 'Operação realizada com sucesso');
-    } else {
-      erro(context, 'ERRO: Não foi possível realizar a operação.}');
-    }
   }
 }

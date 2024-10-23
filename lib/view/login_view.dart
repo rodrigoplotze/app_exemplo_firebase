@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../controller/login_controller.dart';
 import 'components/botoes.dart';
-import 'components/mensagem.dart';
 import 'components/text_field.dart';
 
 class LoginView extends StatefulWidget {
@@ -21,6 +20,8 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
+    txtEmail.text = 'joao@email.com';
+    txtSenha.text = '123456';
     super.initState();
   }
 
@@ -66,10 +67,16 @@ class _LoginViewState extends State<LoginView> {
                         actionsPadding: EdgeInsets.all(20),
                         actions: [
                           botaoCancelar(context, 'cancelar'),
-                          botaoAcao(
-                            context,
-                            'enviar',
-                            esqueceuSenha(context),
+                          ElevatedButton(
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(140, 40),
+                            ),
+                            onPressed: () {
+                              //
+                              // TO-DO: Esqueceu a senha?
+                              //
+                            },
+                            child: Text('enviar'),
                           ),
                         ],
                       );
@@ -80,10 +87,16 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
             SizedBox(height: 15),
-            botaoAcao(
-              context,
-              'entrar',
-              efetuarLogin(context),
+            ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(140, 40),
+              ),
+              onPressed: () {
+                //
+                // TO-DO: Login
+                //
+              },
+              child: Text('entrar'),
             ),
             SizedBox(height: 40),
             Row(
@@ -102,35 +115,5 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
-  }
-
-  //
-  // EFETUAR LOGIN
-  //
-  efetuarLogin(context) async {
-    bool resultado =
-        await LoginController().login(txtEmail.text, txtSenha.text);
-
-    if (resultado) {
-      sucesso(context, 'Usuário autenticado com sucesso.');
-      Navigator.pushNamed(context, 'principal');
-    } else {
-      erro(context, 'Usuário e/ou senha inválida');
-    }
-  }
-
-  //
-  // ESQUECEU A SENHA
-  //
-  esqueceuSenha(context) async {
-    bool resultado = await LoginController().esqueceuSenha(
-      txtEmailEsqueceuSenha.text,
-    );
-
-    if (resultado) {
-      sucesso(context, 'Email enviado com sucesso.');
-    } else {
-      erro(context, 'Informe o email para recuperar a conta.');
-    }
   }
 }

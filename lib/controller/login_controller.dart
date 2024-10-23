@@ -1,15 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../view/components/mensagem.dart';
 
 class LoginController {
-
   final FirebaseAuth auth = FirebaseAuth.instance;
-  
+
   //
   // Criação de um nova conta de usuário
   // no Firebase Authentication
   //
-  Future<bool> criarConta(nome, email, senha) async {
-    return true;
+  void criarConta(context, nome, email, senha) {
+   
   }
 
   //
@@ -17,8 +19,8 @@ class LoginController {
   // Efetuar o login de um usuário previamente cadastrado
   // no serviço Firebase Authentication
   //
-  Future<bool> login(email, senha) async {
-    return true;
+  void login(context, email, senha) {
+
   }
 
   //
@@ -26,21 +28,18 @@ class LoginController {
   // Envia uma mensagem de email para recuperação de senha para
   // um conta de email válida
   //
-  Future<bool> esqueceuSenha(String email) async {
-    return true;
+  void esqueceuSenha(context, String email) {
   }
 
   //
   // LOGOUT
   //
-  Future<bool> logout() async{
-    return true;
-  }
+  logout() {}
 
   //
   // ID do Usuário Logado
   //
-  Future<String> idUsuario() async{
+  idUsuario() {
     return "";
   }
 

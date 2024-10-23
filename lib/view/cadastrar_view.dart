@@ -1,10 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 
-import '../controller/login_controller.dart';
 import 'components/botoes.dart';
-import 'components/mensagem.dart';
 import 'components/text_field.dart';
 
 class CadastrarView extends StatefulWidget {
@@ -44,10 +42,16 @@ class _CadastrarViewState extends State<CadastrarView> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 botaoCancelar(context, 'cancelar'),
-                botaoAcao(
-                  context,
-                  'salvar',
-                  criarConta(context),
+                ElevatedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(140, 40),
+                  ),
+                  onPressed: () {
+                    //
+                    // TO-DO: Criar Conta
+                    //
+                  },
+                  child: Text('salvar'),
                 ),
               ],
             ),
@@ -56,23 +60,5 @@ class _CadastrarViewState extends State<CadastrarView> {
         ),
       ),
     );
-  }
-
-  //
-  // CRIAR CONTA DO USUÁRIO
-  //
-  criarConta(context) async {
-    bool resultado = await LoginController().criarConta(
-      txtNome.text,
-      txtEmail.text,
-      txtSenha.text,
-    );
-
-    if (resultado) {
-      sucesso(context, 'Usuário criado com sucesso.');
-      Navigator.pop(context);
-    } else {
-      erro(context, 'Não foi possível criar o usuário.');
-    }
   }
 }
