@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../controller/login_controller.dart';
 import 'components/botoes.dart';
@@ -14,15 +15,13 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  var txtEmail = TextEditingController();
-  var txtSenha = TextEditingController();
-  var txtEmailEsqueceuSenha = TextEditingController();
+  
+  final ctrl = GetIt.I.get<LoginController>();
 
   @override
   void initState() {
-    txtEmail.text = 'joao@email.com';
-    txtSenha.text = '123456';
     super.initState();
+    ctrl.addListener(() => setState(() {}));
   }
 
   @override
@@ -37,8 +36,8 @@ class _LoginViewState extends State<LoginView> {
               style: TextStyle(fontSize: 60),
             ),
             SizedBox(height: 60),
-            campoTexto('Email', txtEmail, Icons.email),
-            campoTexto('Senha', txtSenha, Icons.password, senha: true),
+            campoTexto('Email', ctrl.txtEmail, Icons.email),
+            campoTexto('Senha', ctrl.txtSenha, Icons.password, senha: true),
             Align(
               alignment: Alignment.bottomRight,
               child: TextButton(
@@ -58,7 +57,7 @@ class _LoginViewState extends State<LoginView> {
                               SizedBox(height: 25),
                               campoTexto(
                                 'Email',
-                                txtEmailEsqueceuSenha,
+                                ctrl.txtEmailEsqueceuSenha,
                                 Icons.email,
                               ),
                             ],
@@ -95,6 +94,7 @@ class _LoginViewState extends State<LoginView> {
                 //
                 // TO-DO: Login
                 //
+                ctrl.login(context);
               },
               child: Text('entrar'),
             ),

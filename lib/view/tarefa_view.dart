@@ -2,22 +2,30 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../controller/login_controller.dart';
 import '../controller/tarefa_controller.dart';
 import '../model/tarefa.dart';
 import 'components/text_field.dart';
 
-class PrincipalView extends StatefulWidget {
-  const PrincipalView({super.key});
+class TarefaView extends StatefulWidget {
+  const TarefaView({super.key});
 
   @override
-  State<PrincipalView> createState() => _PrincipalViewState();
+  State<TarefaView> createState() => _TarefaViewState();
 }
 
-class _PrincipalViewState extends State<PrincipalView> {
-  var txtTitulo = TextEditingController();
-  var txtDescricao = TextEditingController();
+class _TarefaViewState extends State<TarefaView> {
+  final ctrl = GetIt.I.get<TarefaController>();
+  final ctrlLogin = GetIt.I.get<LoginController>();
+
+  @override
+  void initState() {
+    super.initState();
+    ctrl.addListener(() => setState(() {}));
+    ctrlLogin.addListener(() => setState(() {}));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,7 @@ class _PrincipalViewState extends State<PrincipalView> {
                         textStyle: TextStyle(fontSize: 12),
                       ),
                       onPressed: () {
-                        LoginController().logout();
+                        ctrlLogin.logout(context);
                       },
                       icon: Icon(Icons.exit_to_app, size: 22),
                       label: Text(
@@ -93,8 +101,8 @@ class _PrincipalViewState extends State<PrincipalView> {
                             title: Text(item['titulo']),
                             subtitle: Text(item['descricao']),
                             onTap: () {
-                              txtTitulo.text = item['titulo'];
-                              txtDescricao.text = item['descricao'];
+                              ctrl.txtTitulo.text = item['titulo'];
+                              ctrl.txtDescricao.text = item['descricao'];
                               salvarTarefa(context, uid: id);
                             },
                             onLongPress: () {
@@ -138,9 +146,9 @@ class _PrincipalViewState extends State<PrincipalView> {
             width: 300,
             child: Column(
               children: [
-                campoTexto('Título', txtTitulo, Icons.description),
+                campoTexto('Título', ctrl.txtTitulo, Icons.description),
                 TextField(
-                  controller: txtDescricao,
+                  controller: ctrl.txtDescricao,
                   maxLines: 5,
                   decoration: InputDecoration(
                     labelText: 'Descrição',
@@ -154,7 +162,7 @@ class _PrincipalViewState extends State<PrincipalView> {
           actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 10),
           actions: [
             TextButton(
-              onPressed: () => limparCampos(),
+              onPressed: () => ctrl.limparCampos,
               child: Text('cancelar'),
             ),
             ElevatedButton(
@@ -162,16 +170,15 @@ class _PrincipalViewState extends State<PrincipalView> {
               onPressed: () {
                 var t = Tarefa(
                   LoginController().idUsuario().toString(),
-                  txtTitulo.text,
-                  txtDescricao.text,
+                  ctrl.txtTitulo.text,
+                  ctrl.txtDescricao.text,
                 );
 
-                txtTitulo.clear();
-                txtDescricao.clear();
+                ctrl.limparCampos();
                 if (uid == null) {
-                  TarefaController().adicionar(context, t);
+                  ctrl.adicionar(context, t);
                 } else {
-                  TarefaController().atualizar(context, uid, t);
+                  ctrl.atualizar(context, uid, t);
                 }
               },
             ),
@@ -179,11 +186,5 @@ class _PrincipalViewState extends State<PrincipalView> {
         );
       },
     );
-  }
-
-  limparCampos() {
-    txtTitulo.clear();
-    txtDescricao.clear();
-    Navigator.of(context).pop();
   }
 }

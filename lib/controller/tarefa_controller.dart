@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../model/tarefa.dart';
 import 'login_controller.dart';
 
-class TarefaController {
+class TarefaController extends ChangeNotifier {
+  var txtTitulo = TextEditingController();
+  var txtDescricao = TextEditingController();
+
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
   adicionar(context, Tarefa t) {}
@@ -18,5 +22,10 @@ class TarefaController {
         .where('uid', isEqualTo: LoginController().idUsuario());
 
     return resultado.snapshots();
+  }
+
+  void limparCampos(){
+    txtTitulo.clear();
+    txtDescricao.clear();
   }
 }

@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
+import '../controller/login_controller.dart';
 import 'components/botoes.dart';
 import 'components/text_field.dart';
 
@@ -13,13 +15,13 @@ class CadastrarView extends StatefulWidget {
 }
 
 class _CadastrarViewState extends State<CadastrarView> {
-  var txtNome = TextEditingController();
-  var txtEmail = TextEditingController();
-  var txtSenha = TextEditingController();
+  final ctrl = GetIt.I.get<LoginController>();
 
   @override
   void initState() {
     super.initState();
+
+    ctrl.addListener(() => setState(() {}));
   }
 
   @override
@@ -34,9 +36,9 @@ class _CadastrarViewState extends State<CadastrarView> {
               style: TextStyle(fontSize: 60),
             ),
             SizedBox(height: 60),
-            campoTexto('Nome', txtNome, Icons.person),
-            campoTexto('Email', txtEmail, Icons.email),
-            campoTexto('Senha', txtSenha, Icons.password, senha: true),
+            campoTexto('Nome', ctrl.txtNome, Icons.person),
+            campoTexto('Email', ctrl.txtEmail, Icons.email),
+            campoTexto('Senha', ctrl.txtSenha, Icons.password, senha: true),
             SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -50,6 +52,7 @@ class _CadastrarViewState extends State<CadastrarView> {
                     //
                     // TO-DO: Criar Conta
                     //
+                    ctrl.criarConta(context);
                   },
                   child: Text('salvar'),
                 ),
