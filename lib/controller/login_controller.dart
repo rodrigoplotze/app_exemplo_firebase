@@ -78,7 +78,7 @@ class LoginController extends ChangeNotifier {
   // Envia uma mensagem de email para recuperação de senha para
   // um conta de email válida
   //
-  void esqueceuSenha(context, String email) {
+  void esqueceuSenha(context) {
     auth
         .sendPasswordResetEmail(email: txtEmailEsqueceuSenha.text)
         .then((resultado) {

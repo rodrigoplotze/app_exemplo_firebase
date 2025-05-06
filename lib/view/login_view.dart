@@ -71,9 +71,7 @@ class _LoginViewState extends State<LoginView> {
                               minimumSize: const Size(140, 40),
                             ),
                             onPressed: () {
-                              //
-                              // TO-DO: Esqueceu a senha?
-                              //
+                              ctrl.esqueceuSenha(context);
                             },
                             child: Text('enviar'),
                           ),
