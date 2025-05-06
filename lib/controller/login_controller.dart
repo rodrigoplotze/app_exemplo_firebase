@@ -16,7 +16,12 @@ class LoginController extends ChangeNotifier {
   // no Firebase Authentication
   //
   void criarConta(context) {
-    try {} on FirebaseAuthException catch (e) {
+    //
+    // TO-DO
+    //
+    limparCampos();
+
+    /*
       String mensagem;
       switch (e.code) {
         case 'email-already-in-use':
@@ -33,10 +38,7 @@ class LoginController extends ChangeNotifier {
       }
 
       erro(context, mensagem);
-    } catch (e) {
-      // Erro genérico
-      erro(context, 'Erro inesperado. Tente novamente.');
-    }
+      */
   }
 
   //
@@ -45,12 +47,12 @@ class LoginController extends ChangeNotifier {
   // no serviço Firebase Authentication
   //
   void login(context) {
-    try {
-      //
-      // TO-DO
-      //
-    } on FirebaseAuthException catch (e) {
-      String message;
+    //
+    // TO-DO
+    //
+    limparCampos();
+
+    /*  String message;
       switch (e.code) {
         case 'invalid-email':
           message = 'O e-mail informado é inválido.';
@@ -68,7 +70,7 @@ class LoginController extends ChangeNotifier {
           message = 'Erro desconhecido: ${e.message}';
       }
       erro(context, message);
-    }
+      */
   }
 
   //
@@ -77,11 +79,12 @@ class LoginController extends ChangeNotifier {
   // um conta de email válida
   //
   void esqueceuSenha(context, String email) {
-    try {
-      //
-      // TO-DO
-      //
-    } on FirebaseAuthException catch (e) {
+    auth
+        .sendPasswordResetEmail(email: txtEmailEsqueceuSenha.text)
+        .then((resultado) {
+      sucesso(context, 'E-mail enviado com sucesso!');
+      Navigator.pop(context);
+    }).catchError((e) {
       String mensagem;
       switch (e.code) {
         case 'invalid-email':
@@ -94,24 +97,19 @@ class LoginController extends ChangeNotifier {
           mensagem = 'Erro: ${e.message}';
       }
       erro(context, mensagem);
-    } catch (e) {
-      erro(context, 'Erro inesperado. Tente novamente mais tarde.');
-    }
+    });
+    txtEmailEsqueceuSenha.clear();
   }
 
   //
   // LOGOUT
   //
   logout(context) {
-    try {
-      //
-      // TO-DO
-      //
-      // Após logout, você pode navegar para a tela de login, por exemplo:
-      Navigator.of(context).pushReplacementNamed('/login');
-    } catch (e) {
+    auth.signOut().then((resultado) {
+      Navigator.of(context).pushReplacementNamed('login');
+    }).catchError((e) {
       erro(context, 'Não foi possível efetuar logout');
-    }
+    });
   }
 
   //
@@ -127,5 +125,12 @@ class LoginController extends ChangeNotifier {
   //
   Future<String> usuarioLogado() async {
     return "";
+  }
+
+  void limparCampos() {
+    txtNome.clear();
+    txtEmail.clear();
+    txtSenha.clear();
+    txtEmailEsqueceuSenha.clear();
   }
 }

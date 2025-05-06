@@ -54,7 +54,7 @@ class _TarefaViewState extends State<TarefaView> {
                       onPressed: () {
                         ctrlLogin.logout(context);
                       },
-                      icon: Icon(Icons.exit_to_app, size: 22),
+                      icon: Icon(Icons.exit_to_app, size: 22,color: Colors.white),
                       label: Text(
                         snapshot.data.toString(),
                         style: TextStyle(color: Colors.white),

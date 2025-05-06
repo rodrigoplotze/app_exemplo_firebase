@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 void erro(context, String msg) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      backgroundColor: Colors.redAccent.withValues(alpha: 0.4),
+      backgroundColor: Colors.grey.shade200,
       content: Text(
         msg,
         style: const TextStyle(color: Colors.white),
