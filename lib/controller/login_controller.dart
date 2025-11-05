@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,18 +11,20 @@ class LoginController extends ChangeNotifier {
   var txtEmailEsqueceuSenha = TextEditingController();
 
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   //
   // Criação de um nova conta de usuário
   // no Firebase Authentication
   //
   void criarConta(context) {
-    //
-    // TO-DO
-    //
-    limparCampos();
+    auth
+        .createUserWithEmailAndPassword(
+            email: txtEmail.text, password: txtSenha.text,)
+        .then((resultado) {
 
-    /*
+      limparCampos();
+    }).catchError((e) {
       String mensagem;
       switch (e.code) {
         case 'email-already-in-use':
@@ -38,7 +41,7 @@ class LoginController extends ChangeNotifier {
       }
 
       erro(context, mensagem);
-      */
+    });
   }
 
   //
@@ -47,30 +50,34 @@ class LoginController extends ChangeNotifier {
   // no serviço Firebase Authentication
   //
   void login(context) {
-    //
-    // TO-DO
-    //
-    limparCampos();
+   auth.signInWithEmailAndPassword(
+            email: txtEmail.text, password: txtSenha.text,)
+    .then((resultado) {
 
-    /*  String message;
-      switch (e.code) {
+      limparCampos();
+    }).catchError((e) {
+      String mensagem;
+     switch (e.code) {
         case 'invalid-email':
-          message = 'O e-mail informado é inválido.';
+          mensagem = 'O e-mail informado é inválido.';
           break;
         case 'user-disabled':
-          message = 'Este usuário foi desativado.';
+          mensagem = 'Este usuário foi desativado.';
           break;
         case 'user-not-found':
-          message = 'Usuário não encontrado.';
+          mensagem = 'Usuário não encontrado.';
           break;
         case 'wrong-password':
-          message = 'Senha incorreta.';
+          mensagem = 'Senha incorreta.';
           break;
         default:
-          message = 'Erro desconhecido: ${e.message}';
+          mensagem = 'Erro desconhecido: ${e.mensagem}';
       }
-      erro(context, message);
-      */
+
+      erro(context, mensagem);
+    });
+
+  
   }
 
   //
@@ -124,7 +131,15 @@ class LoginController extends ChangeNotifier {
   // NOME do Usuário Logado
   //
   Future<String> usuarioLogado() async {
-    return "";
+    var nome = "";
+    await FirebaseFirestore.instance
+      .collection("usuarios")
+      .where('uid',isEqualTo: idUsuario())
+      .get()
+      .then((resultado){
+        nome = resultado.docs[0].data()['nome'] ?? '';
+      });
+    return nome;
   }
 
   void limparCampos() {

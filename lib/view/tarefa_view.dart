@@ -54,7 +54,8 @@ class _TarefaViewState extends State<TarefaView> {
                       onPressed: () {
                         ctrlLogin.logout(context);
                       },
-                      icon: Icon(Icons.exit_to_app, size: 22,color: Colors.white),
+                      icon: Icon(Icons.exit_to_app,
+                          size: 22, color: Colors.white),
                       label: Text(
                         snapshot.data.toString(),
                         style: TextStyle(color: Colors.white),
@@ -140,7 +141,8 @@ class _TarefaViewState extends State<TarefaView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Adicionar Tarefa"),
+          title:
+              uid == null ? Text("Adicionar Tarefa") : Text("Alterar Tarefa"),
           content: SizedBox(
             height: 250,
             width: 300,
@@ -162,7 +164,10 @@ class _TarefaViewState extends State<TarefaView> {
           actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 10),
           actions: [
             TextButton(
-              onPressed: () => ctrl.limparCampos,
+              onPressed: () {
+                ctrl.limparCampos;
+                Navigator.pop(context);
+              },
               child: Text('cancelar'),
             ),
             ElevatedButton(

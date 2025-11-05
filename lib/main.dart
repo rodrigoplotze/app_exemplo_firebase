@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -12,7 +13,15 @@ import 'view/tarefa_view.dart';
 
 final g = GetIt.instance;
 
-void main() {
+Future<void> main() async {
+
+  //
+  // Inicializar o Firebase
+  //
+  // await Firebase.initializeApp(
+  // options: DefaultFirebaseOptions.currentPlatform,
+  // );
+
   g.registerSingleton<LoginController>(LoginController());
   g.registerSingleton<TarefaController>(TarefaController());
 
